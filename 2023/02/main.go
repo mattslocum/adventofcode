@@ -24,10 +24,16 @@ func main() {
 
 func checkGame(line string) int {
 	lineSplit := strings.Split(line, ": ")
-	game, err := strconv.Atoi(strings.TrimLeft(lineSplit[0], "Game "))
+	_, err := strconv.Atoi(strings.TrimLeft(lineSplit[0], "Game "))
 	if err != nil {
 		return 0
 	}
+
+	var (
+		minRed   = 0
+		minGreen = 0
+		minBlue  = 0
+	)
 
 	gameSets := strings.Split(lineSplit[1], "; ")
 	for _, set := range gameSets {
@@ -40,23 +46,22 @@ func checkGame(line string) int {
 				os.Exit(1)
 			}
 
-			// max 12 red cubes, 13 green cubes, and 14 blue cubes
 			switch cube[1] {
 			case "red":
-				if num > 12 {
-					return 0
+				if num > minRed {
+					minRed = num
 				}
 			case "green":
-				if num > 13 {
-					return 0
+				if num > minGreen {
+					minGreen = num
 				}
 			case "blue":
-				if num > 14 {
-					return 0
+				if num > minBlue {
+					minBlue = num
 				}
 			}
 		}
 	}
 
-	return game
+	return minRed * minGreen * minBlue
 }
