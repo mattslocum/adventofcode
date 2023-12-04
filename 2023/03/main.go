@@ -18,51 +18,60 @@ func main() {
 
 	total := 0
 	for y, line := range lines {
-		num := ""
 		for x := 0; x < len(line); x++ {
-			if unicode.IsDigit(rune(lines[y][x])) {
-				num += string(lines[y][x])
-			} else {
-				if num != "" {
-					// We have a number that just ended
-					total += checkPart(lines, num, x-len(num), y)
-					// if num == "123" {
-					// 	os.Exit(0)
-					// }
-					num = ""
-				}
+			if lines[y][x] == '*' {
+				total += findGeer(lines, x, y)
 			}
-		}
-		if num != "" {
-			// We have a number at the end of the line
-			total += checkPart(lines, num, len(lines[y])-len(num), y)
-			num = ""
 		}
 	}
 	fmt.Println(total)
 }
 
-func checkPart(lines []string, num string, xPos int, yPos int) int {
+func findGeer(lines []string, xPos int, yPos int) int {
 	maxY := len(lines)
-	maxX := len(lines[0])
-	// start top left
+	maxX := len(lines[0]) // assuming perfect square
+	nums := []int{}
 	for y := max(0, yPos-1); y <= yPos+1 && y < maxY; y++ {
-		for x := max(0, xPos-1); x <= xPos+len(num) && x < maxX; x++ {
+		prevWasNum := false
+		for x := max(0, xPos-1); x <= xPos+1 && x < maxX; x++ {
 			if y == yPos && x == xPos {
-				// Skip the number
-				x += len(num)
-				if x >= maxX {
-					// Don't go over the edge
-					continue
-				}
+				prevWasNum = false
+				// Skip the center
+				continue
 			}
-			// fmt.Println(string(lines[y][x]), y, x)
-			if lines[y][x] != '.' {
-				// fmt.Println("found " + num)
-				part, _ := strconv.Atoi(num)
-				return part
+			if unicode.IsDigit(rune(lines[y][x])) {
+				if !prevWasNum {
+					nums = append(nums, findNum(lines[y], x))
+					prevWasNum = true
+				}
+			} else {
+				prevWasNum = false
+			}
+			if len(nums) == 2 {
+				// fmt.Println(nums)
+				return nums[0] * nums[1]
 			}
 		}
 	}
 	return 0
+}
+
+func findNum(s string, x int) int {
+	digits := []byte{s[x]}
+	for d := x - 1; d >= 0; d-- {
+		if unicode.IsDigit(rune(s[d])) {
+			digits = append([]byte{s[d]}, digits...)
+		} else {
+			break
+		}
+	}
+	for d := x + 1; d < len(s); d++ {
+		if unicode.IsDigit(rune(s[d])) {
+			digits = append(digits, s[d])
+		} else {
+			break
+		}
+	}
+	num, _ := strconv.Atoi(string(digits))
+	return num
 }
