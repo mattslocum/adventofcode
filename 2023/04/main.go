@@ -16,18 +16,32 @@ func main() {
 	}
 	lines := strings.Split(string(data), "\n")
 
-	// re := regexp.MustCompile(" +")
-
-	total := 0
+	cards := []int{}
 	for _, line := range lines {
 		scores := strings.Split(line[10:], " | ")
-		// winning := re.Split(scores[0], -1)
-		// picks := re.Split(scores[1], -1)
 		winning := score2Nums(scores[0])
 		picks := score2Nums(scores[1])
+		// TODO: If we cared about performance, sort and then short circuit the search later so this actually helps
 		sort.Ints(winning)
 		sort.Ints(picks)
-		total += countMatches(winning, picks)
+		cards = append(cards, countMatches(winning, picks))
+	}
+
+	// Pre-sum each card from end to start to know it's value
+	// that way when we say it gets used by a prior card, we already know the value.
+	points := make([]int, len(cards))
+	for i := len(cards) - 1; i >= 0; i-- {
+		sweeping := 1
+		for x := 1; x <= cards[i]; x++ {
+			sweeping += points[i+x]
+		}
+		points[i] = sweeping
+	}
+	// fmt.Println(points)
+
+	total := 0
+	for _, n := range points {
+		total += n
 	}
 	fmt.Println(total)
 }
@@ -48,11 +62,7 @@ func countMatches(winning, picks []int) int {
 	score := 0
 	for _, w := range winning {
 		if contains[int](picks, w) {
-			if score == 0 {
-				score = 1
-			} else {
-				score *= 2
-			}
+			score++
 		}
 	}
 	return score
