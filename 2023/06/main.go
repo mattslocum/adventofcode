@@ -18,44 +18,40 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	races := parseInput(string(data))
-	// fmt.Println(races)
+	race := parseInput(string(data))
+	fmt.Println(race)
 
-	findWins(races)
+	findWins(race)
 }
 
-func parseInput(data string) []race {
+func parseInput(data string) race {
 	lines := strings.Split(string(data), "\n")
 	times := strings.Fields(lines[0])
 	dists := strings.Fields(lines[1])
 
-	races := make([]race, len(times)-1)
+	time := ""
+	dist := ""
 	for i := 1; i < len(times); i++ {
-		t, _ := strconv.Atoi(times[i])
-		d, _ := strconv.Atoi(dists[i])
-		races[i-1] = race{
-			time: t,
-			dist: d,
-		}
+		time += times[i]
+		dist += dists[i]
 	}
 
-	return races
+	t, _ := strconv.Atoi(time)
+	d, _ := strconv.Atoi(dist)
+	return race{
+		time: t,
+		dist: d,
+	}
 }
 
-func findWins(races []race) {
-	product := 1
-	for _, race := range races {
-		wins := 0
-		for i := 1; i < race.time; i++ {
-			dist := (race.time - i) * i
-			// println("dist", i, dist)
-			if dist > race.dist {
-				wins++
-			}
+func findWins(race race) {
+	wins := 0
+	for i := 1; i < race.time; i++ {
+		dist := (race.time - i) * i
+		// println("dist", i, dist)
+		if dist > race.dist {
+			wins++
 		}
-		// fmt.Println(wins)
-		product *= wins
-		// break
 	}
-	fmt.Println(product)
+	fmt.Println(wins)
 }
