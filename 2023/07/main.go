@@ -48,7 +48,7 @@ var scores = map[string]int{
 	"8": 8,
 	"9": 9,
 	"T": 10,
-	"J": 11,
+	"J": 1,
 	"Q": 12,
 	"K": 13,
 	"A": 14,
@@ -113,6 +113,30 @@ func findRank(cards []string) rank {
 	for _, c := range cards {
 		matches[c]++
 	}
+
+	// handle Jokers
+	if matches["J"] > 0 {
+		j := matches["J"]
+		delete(matches, "J")
+
+		// setup keys to get sorted by int values
+		keys := make([]string, 0, len(matches))
+		for key := range matches {
+			keys = append(keys, key)
+		}
+		sort.SliceStable(keys, func(i, j int) bool {
+			return matches[keys[i]] > matches[keys[j]]
+		})
+		// fmt.Println(matches, keys)
+
+		// were they all J?
+		if len(matches) == 0 {
+			matches["A"] = j
+		} else {
+			matches[keys[0]] += j
+		}
+	}
+
 	switch len(matches) {
 	case 1:
 		return kind5
