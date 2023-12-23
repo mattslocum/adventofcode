@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -21,9 +22,11 @@ func main() {
 	}
 	grid := parseInput(string(data))
 
-	startY, startX := findStart(grid)
+	startY, startX := findStart(&grid)
 
-	fmt.Println(findDist(grid, startY, startX) / 2)
+	dist := findDist(&grid, startY, startX)
+	fmt.Println(dist / 2)
+	renderResult(grid, dist)
 }
 
 func parseInput(data string) [][]string {
@@ -35,16 +38,16 @@ func parseInput(data string) [][]string {
 	return result
 }
 
-func findStart(grid [][]string) (int, int) {
+func findStart(grid *[][]string) (int, int) {
 	var (
 		startY int
 		startX int
 	)
-	lenGridY := len(grid)
-	lenGridX := len(grid[0])
+	lenGridY := len(*grid)
+	lenGridX := len((*grid)[0])
 	for y := 0; startY == 0 && y < lenGridY; y++ {
 		for x := 0; x < lenGridX; x++ {
-			if grid[y][x] == "S" {
+			if (*grid)[y][x] == "S" {
 				startY = y
 				startX = x
 				break
@@ -54,37 +57,37 @@ func findStart(grid [][]string) (int, int) {
 	return startY, startX
 }
 
-func findDist(grid [][]string, startY int, startX int) int {
+func findDist(grid *[][]string, startY int, startX int) int {
 	walk := setupWalker(grid, startY, startX)
 	steps := 1
-	for ; grid[walk.Y][walk.X] != "S"; steps++ {
-		walk = step(grid, walk)
+	for ; (*grid)[walk.Y][walk.X][0] != 'S'; steps++ {
+		walk = step(grid, walk, steps)
 	}
 
 	return steps
 }
 
-func setupWalker(grid [][]string, startY int, startX int) (w pos) {
+func setupWalker(grid *[][]string, startY int, startX int) (w pos) {
 	w = pos{
 		PrevX: startX,
 		PrevY: startY,
 	}
 
-	up := grid[startY-1][startX]
+	up := (*grid)[startY-1][startX]
 	if up == "|" || up == "7" || up == "F" {
 		w.X = startX
 		w.Y = startY - 1
 		return
 	}
 
-	right := grid[startY][startX+1]
+	right := (*grid)[startY][startX+1]
 	if right == "-" || right == "7" || right == "J" {
 		w.X = startX + 1
 		w.Y = startY
 		return
 	}
 
-	down := grid[startY+1][startX]
+	down := (*grid)[startY+1][startX]
 	if down == "|" || down == "L" || down == "J" {
 		w.X = startX
 		w.Y = startY + 1
@@ -93,7 +96,7 @@ func setupWalker(grid [][]string, startY int, startX int) (w pos) {
 
 	// only a problem for test data
 	if startX > 0 {
-		left := grid[startY][startX-1]
+		left := (*grid)[startY][startX-1]
 		if left == "-" || left == "L" || left == "F" {
 			w.X = startX - 1
 			w.Y = startY
@@ -104,7 +107,7 @@ func setupWalker(grid [][]string, startY int, startX int) (w pos) {
 }
 
 // not going to worry about out of bounds
-func step(grid [][]string, cur pos) pos {
+func step(grid *[][]string, cur pos, steps int) pos {
 	/**
 	  | is a vertical pipe connecting north and south.
 	  - is a horizontal pipe connecting east and west.
@@ -121,7 +124,7 @@ func step(grid [][]string, cur pos) pos {
 		PrevX: cur.X,
 		PrevY: cur.Y,
 	}
-	switch grid[cur.Y][cur.X] {
+	switch (*grid)[cur.Y][cur.X] {
 	case "|":
 		if cur.PrevY < cur.Y {
 			next.Y++
@@ -169,5 +172,49 @@ func step(grid [][]string, cur pos) pos {
 			next.Y++
 		}
 	}
+	(*grid)[cur.Y][cur.X] = (*grid)[cur.Y][cur.X] + strconv.Itoa(steps)
 	return next
+}
+
+func renderResult(grid [][]string, dist int) {
+	// TODO: Consider golang templates
+	body := ""
+	for _, row := range grid {
+		line := "<div class='row'>"
+		for _, cell := range row {
+			if cell[0] == 'S' {
+				line += "<span class='s'>" + cell[:1] + "</span>"
+			} else if len(cell) > 1 {
+				i, _ := strconv.Atoi(cell[1:])
+				h := i / (dist / 256)
+				line += fmt.Sprintf("<span class='v' style='background: hsl(%d, 100%%, 30%%)'>%s</span>", h, cell[:1])
+			} else if cell == "." {
+				line += cell
+			} else {
+				line += " "
+			}
+		}
+		body += line + "</div>"
+	}
+	html := `<!DOCTYPE html>
+<html lang="en">
+<style>
+.row {
+	letter-spacing: 7px;
+}
+span.s {
+	background: #00ff51;
+	color: black;
+}
+span.v {
+	background: #9c0000;
+	color: white;
+}
+</style>
+<pre>%s</pre>
+</html>
+	`
+	html = fmt.Sprintf(html, body)
+
+	os.WriteFile("./result.html", []byte(html), 0644)
 }
