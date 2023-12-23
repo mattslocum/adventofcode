@@ -20,6 +20,13 @@ func main() {
 		sum += findNext(report)
 	}
 	fmt.Println(sum)
+
+	// part2
+	sum = 0
+	for _, report := range reports {
+		sum += findPrev(report)
+	}
+	fmt.Println(sum)
 }
 
 func parseInput(data string) [][]int {
@@ -38,8 +45,20 @@ func parseInput(data string) [][]int {
 }
 
 func findNext(line []int) int {
+	vals := buildTree(line)
+	// fmt.Println(vals)
+
+	for line := len(vals) - 2; line >= 0; line-- {
+		last := len(vals[line]) - 1
+		lastDeeper := len(vals[line+1]) - 1
+		vals[line] = append(vals[line], vals[line][last]+vals[line+1][lastDeeper])
+	}
+	// fmt.Println("end", vals)
+	return vals[0][len(vals[0])-1]
+}
+
+func buildTree(line []int) [][]int {
 	vals := [][]int{line}
-	// build tree
 	for depth := 1; ; depth++ {
 		prev := vals[depth-1]
 		vals = append(vals, make([]int, len(prev)-1))
@@ -54,13 +73,15 @@ func findNext(line []int) int {
 			break
 		}
 	}
-	// fmt.Println(vals)
+	return vals
+}
+
+// Part2
+func findPrev(line []int) int {
+	vals := buildTree(line)
 
 	for line := len(vals) - 2; line >= 0; line-- {
-		last := len(vals[line]) - 1
-		lastDeeper := len(vals[line+1]) - 1
-		vals[line] = append(vals[line], vals[line][last]+vals[line+1][lastDeeper])
+		vals[line] = append([]int{vals[line][0] - vals[line+1][0]}, vals[line]...)
 	}
-	// fmt.Println("end", vals)
-	return vals[0][len(vals[0])-1]
+	return vals[0][0]
 }
