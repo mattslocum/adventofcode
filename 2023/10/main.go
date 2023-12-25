@@ -26,6 +26,8 @@ func main() {
 
 	dist := findDist(&grid, startY, startX)
 	fmt.Println(dist / 2)
+	// part 2 answer: 435
+	fmt.Println("found", findDots(&grid))
 	renderResult(grid, dist)
 }
 
@@ -179,17 +181,17 @@ func step(grid *[][]string, cur pos, steps int) pos {
 func renderResult(grid [][]string, dist int) {
 	// TODO: Consider golang templates
 	body := ""
-	for _, row := range grid {
+	for y, row := range grid {
 		line := "<div class='row'>"
-		for _, cell := range row {
+		for x, cell := range row {
 			if cell[0] == 'S' {
 				line += "<span class='s'>" + cell[:1] + "</span>"
+			} else if len(cell) > 1 && cell[0] == '.' {
+				line += fmt.Sprintf("<span y%d x%d class='dot'>.</span>", y, x)
 			} else if len(cell) > 1 {
 				i, _ := strconv.Atoi(cell[1:])
 				h := i / (dist / 256)
 				line += fmt.Sprintf("<span class='v' style='background: hsl(%d, 100%%, 30%%)'>%s</span>", h, cell[:1])
-			} else if cell == "." {
-				line += cell
 			} else {
 				line += " "
 			}
@@ -206,6 +208,10 @@ span.s {
 	background: #00ff51;
 	color: black;
 }
+span.dot {
+	background: black;
+	color: white;
+}
 span.v {
 	background: #9c0000;
 	color: white;
@@ -217,4 +223,46 @@ span.v {
 	html = fmt.Sprintf(html, body)
 
 	os.WriteFile("./result.html", []byte(html), 0644)
+}
+
+func findDots(grid *[][]string) int {
+	found := 0
+	for y, row := range *grid {
+		for x, cell := range row {
+			if len(cell) == 1 {
+				// walk left and count intersections
+				intersections := 0
+				prev := '.'
+				for i := x - 1; i >= 0; i-- {
+					// detect one of our lines
+					if len(row[i]) > 1 && row[i][0] != '.' {
+						if row[i][0] != '-' {
+							// revent double counting angled intersections
+							switch row[i][0] {
+							case 'F':
+								if prev == 'J' {
+									prev = '.'
+									continue
+								}
+							case 'L':
+								if prev == '7' {
+									prev = '.'
+									continue
+								}
+							}
+							prev = rune(row[i][0])
+							intersections++
+						}
+					} else {
+						prev = '.'
+					}
+				}
+				if intersections%2 == 1 {
+					(*grid)[y][x] = fmt.Sprintf(".%d", intersections)
+					found++
+				}
+			}
+		}
+	}
+	return found
 }
