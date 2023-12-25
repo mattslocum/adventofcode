@@ -19,13 +19,16 @@ func main() {
 	}
 	galaxies := parseInput(string(data))
 	// fmt.Println(galaxies)
+	// Part1: 10490062
 	sumDistances(galaxies)
 }
 
 func parseInput(data string) []galaxy {
 	galaxies := []galaxy{}
 	lines := strings.Split(string(data), "\n")
-	// expand X gaps
+	// find X gaps
+	xGaps := map[int]int{}
+	found := 0
 	for x := 0; x < len(lines[0]); x++ {
 		for y, line := range lines {
 			if line[x] == '#' {
@@ -33,12 +36,10 @@ func parseInput(data string) []galaxy {
 			}
 			// reached end?
 			if y == len(lines)-1 {
-				for y2, _ := range lines {
-					lines[y2] = lines[y2][:x+1] + lines[y2][x:]
-				}
-				x++ // because we added an extra column
+				found++
 			}
 		}
+		xGaps[x] = found
 	}
 	// find galaxies
 	yAdd := 0
@@ -47,7 +48,11 @@ func parseInput(data string) []galaxy {
 		for x, val := range line {
 			if val == '#' {
 				foundGxy = true
-				galaxies = append(galaxies, galaxy{X: x, Y: y + yAdd})
+				// 1 less than 1million because we are already counting it once
+				galaxies = append(galaxies, galaxy{
+					X: x + (xGaps[x] * 999999),
+					Y: y + (yAdd * 999999),
+				})
 			}
 		}
 		if !foundGxy {
