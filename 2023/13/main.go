@@ -43,16 +43,18 @@ func parseInput(data string) []pattern {
 
 func findReflection(pat pattern) int {
 	for i := 1; i < len(pat.Lines); i++ {
-		if pat.Lines[i-1] == pat.Lines[i] {
-			if isEqual(reverse(pat.Lines[:i]), pat.Lines[i:]) {
+		off := offBy(pat.Lines[i-1], pat.Lines[i])
+		if off < 2 {
+			if isEqual(reverse(pat.Lines[:i-1]), pat.Lines[i+1:], off) {
 				return i * 100
 			}
 		}
 	}
 	rot := rotate(pat)
 	for i := 1; i < len(rot); i++ {
-		if rot[i-1] == rot[i] {
-			if isEqual(reverse(rot[:i]), rot[i:]) {
+		off := offBy(rot[i-1], rot[i])
+		if off < 2 {
+			if isEqual(reverse(rot[:i-1]), rot[i+1:], off) {
 				return i
 			}
 		}
@@ -73,17 +75,15 @@ func rotate(pat pattern) []string {
 	return r
 }
 
-func isEqual(a, b []string) bool {
+func isEqual(a, b []string, off int) bool {
 	min := len(a)
 	if len(b) < min {
 		min = len(b)
 	}
 	for i := 0; i < min; i++ {
-		if a[i] != b[i] {
-			return false
-		}
+		off += offBy(a[i], b[i])
 	}
-	return true
+	return off == 1
 }
 
 func reverse(s []string) []string {
@@ -93,4 +93,14 @@ func reverse(s []string) []string {
 		r[i], r[j] = r[j], r[i]
 	}
 	return r
+}
+
+func offBy(a, b string) int {
+	off := 0
+	for i, _ := range a {
+		if a[i] != b[i] {
+			off++
+		}
+	}
+	return off
 }
