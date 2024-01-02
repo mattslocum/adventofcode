@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -21,15 +22,39 @@ func parseInput(data string) []string {
 }
 
 func sumNorth(lines []string) {
+	// prep rotated the other direction
 	rot := rotate(lines)
-	// slide left, which is north
-	for i, line := range rot {
-		rot[i] = sideO(line)
-	}
+	slices.Reverse(rot)
 
-	size := len(rot[0])
+	cache := map[string]int{}
+	// large enough loops to find the cache hit
+	for i := 0; i < 100000; i++ {
+		for j, line := range rot {
+			rot[j] = sideO(line)
+		}
+		slices.Reverse(rot)
+		rot = rotate(rot)
+
+		// mod 4 because 4 tilts is 1 cycle
+		if (i+1)%4 == 0 {
+			cycles := (i + 1) / 4
+			key := strings.Join(rot, "")
+			if prev, has := cache[key]; has {
+				// 100M cycles
+				if (1000000000-prev)%(cycles-prev) == 0 {
+					count(rot)
+					break
+				}
+			}
+			cache[key] = cycles
+		}
+	}
+}
+
+func count(lines []string) {
+	size := len(lines[0])
 	total := 0
-	for _, row := range rot {
+	for _, row := range lines {
 		for i, c := range row {
 			if c == 'O' {
 				total += size - i
