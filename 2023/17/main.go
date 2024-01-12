@@ -56,6 +56,8 @@ func parseInput(data string) [][]cell {
 }
 
 func walk(data [][]cell) {
+	maxSteps := 10
+	minSteps := 4
 	todo := []step{
 		{Y: 0, X: 1, From: FromL, Count: 1, Steps: data[0][1].Val},
 		{Y: 1, X: 0, From: FromT, Count: 1, Steps: data[1][0].Val},
@@ -92,54 +94,66 @@ func walk(data [][]cell) {
 		switch st.From {
 		case FromL:
 			// straight
-			if st.Count < 3 && st.X < len(data[0])-1 {
+			if st.Count < maxSteps && st.X < len(data[0])-1 {
 				todo = append(todo, step{Y: st.Y, X: st.X + 1, From: FromL, Count: st.Count + 1, Steps: st.Steps + data[st.Y][st.X+1].Val})
+				if st.Count < minSteps {
+					continue
+				}
 			}
 			// up
-			if st.Y > 0 {
+			if st.Y-minSteps >= 0 {
 				todo = append(todo, step{Y: st.Y - 1, X: st.X, From: FromB, Count: 1, Steps: st.Steps + data[st.Y-1][st.X].Val})
 			}
 			// down
-			if st.Y < len(data)-1 {
+			if st.Y <= len(data)-1-minSteps {
 				todo = append(todo, step{Y: st.Y + 1, X: st.X, From: FromT, Count: 1, Steps: st.Steps + data[st.Y+1][st.X].Val})
 			}
 		case FromR:
 			// straight
-			if st.Count < 3 && st.X > 0 {
+			if st.Count < maxSteps && st.X > 0 {
 				todo = append(todo, step{Y: st.Y, X: st.X - 1, From: FromR, Count: st.Count + 1, Steps: st.Steps + data[st.Y][st.X-1].Val})
+				if st.Count < minSteps {
+					continue
+				}
 			}
 			// up
-			if st.Y > 0 {
+			if st.Y-minSteps >= 0 {
 				todo = append(todo, step{Y: st.Y - 1, X: st.X, From: FromB, Count: 1, Steps: st.Steps + data[st.Y-1][st.X].Val})
 			}
 			// down
-			if st.Y < len(data)-1 {
+			if st.Y <= len(data)-1-minSteps {
 				todo = append(todo, step{Y: st.Y + 1, X: st.X, From: FromT, Count: 1, Steps: st.Steps + data[st.Y+1][st.X].Val})
 			}
 		case FromT:
 			// straight
-			if st.Count < 3 && st.Y < len(data)-1 {
+			if st.Count < maxSteps && st.Y < len(data)-1 {
 				todo = append(todo, step{Y: st.Y + 1, X: st.X, From: FromT, Count: st.Count + 1, Steps: st.Steps + data[st.Y+1][st.X].Val})
+				if st.Count < minSteps {
+					continue
+				}
 			}
 			// left
-			if st.X > 0 {
+			if st.X-minSteps >= 0 {
 				todo = append(todo, step{Y: st.Y, X: st.X - 1, From: FromR, Count: 1, Steps: st.Steps + data[st.Y][st.X-1].Val})
 			}
 			// right
-			if st.X < len(data[0])-1 {
+			if st.X <= len(data[0])-1-minSteps {
 				todo = append(todo, step{Y: st.Y, X: st.X + 1, From: FromL, Count: 1, Steps: st.Steps + data[st.Y][st.X+1].Val})
 			}
 		case FromB:
 			// straight
-			if st.Count < 3 && st.Y > 0 {
+			if st.Count < maxSteps && st.Y > 0 {
 				todo = append(todo, step{Y: st.Y - 1, X: st.X, From: FromB, Count: st.Count + 1, Steps: st.Steps + data[st.Y-1][st.X].Val})
+				if st.Count < minSteps {
+					continue
+				}
 			}
 			// left
-			if st.X > 0 {
+			if st.X-minSteps >= 0 {
 				todo = append(todo, step{Y: st.Y, X: st.X - 1, From: FromR, Count: 1, Steps: st.Steps + data[st.Y][st.X-1].Val})
 			}
 			// right
-			if st.X < len(data[0])-1 {
+			if st.X <= len(data[0])-1-minSteps {
 				todo = append(todo, step{Y: st.Y, X: st.X + 1, From: FromL, Count: 1, Steps: st.Steps + data[st.Y][st.X+1].Val})
 			}
 		}
