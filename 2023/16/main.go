@@ -45,8 +45,51 @@ func main() {
 		os.Exit(1)
 	}
 	tiles := parseInput(string(data))
-	tiles = runReflections(tiles)
-	countVisited(tiles)
+
+	max := 0
+	for x, _ := range tiles[0] {
+		// top row
+		todo := []step{
+			{Y: 0, X: x, Dir: D},
+		}
+		ran := runReflections(clone(tiles), todo)
+		count := countVisited(ran)
+		if count > max {
+			max = count
+		}
+
+		// bottom row
+		todo = []step{
+			{Y: len(tiles) - 1, X: x, Dir: U},
+		}
+		ran = runReflections(clone(tiles), todo)
+		count = countVisited(ran)
+		if count > max {
+			max = count
+		}
+	}
+	for y, _ := range tiles {
+		// left column
+		todo := []step{
+			{Y: y, X: 0, Dir: R},
+		}
+		ran := runReflections(clone(tiles), todo)
+		count := countVisited(ran)
+		if count > max {
+			max = count
+		}
+
+		// right column
+		todo = []step{
+			{Y: y, X: len(tiles[0]) - 1, Dir: L},
+		}
+		ran = runReflections(clone(tiles), todo)
+		count = countVisited(ran)
+		if count > max {
+			max = count
+		}
+	}
+	fmt.Println(max)
 }
 
 func parseInput(data string) [][]tile {
@@ -72,11 +115,7 @@ func parseInput(data string) [][]tile {
 	return tiles
 }
 
-func runReflections(tiles [][]tile) [][]tile {
-	todo := []step{
-		{Y: 0, X: 0, Dir: R},
-	}
-
+func runReflections(tiles [][]tile, todo []step) [][]tile {
 	for len(todo) > 0 {
 		st := todo[0]
 		todo = todo[1:]
@@ -203,7 +242,7 @@ func moveDown(st step) step {
 	return step{Y: st.Y + 1, X: st.X, Dir: D}
 }
 
-func countVisited(tiles [][]tile) {
+func countVisited(tiles [][]tile) int {
 	count := 0
 	for _, row := range tiles {
 		for _, t := range row {
@@ -212,5 +251,14 @@ func countVisited(tiles [][]tile) {
 			}
 		}
 	}
-	fmt.Println(count)
+	return count
+}
+
+func clone(tiles [][]tile) [][]tile {
+	result := make([][]tile, len(tiles))
+	for y, line := range tiles {
+		result[y] = make([]tile, len(line))
+		copy(result[y], line)
+	}
+	return result
 }
