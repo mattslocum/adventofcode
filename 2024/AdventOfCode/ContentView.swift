@@ -22,6 +22,7 @@ struct ContentView: View {
                     } label: {
                         Text(day.day)
                     }
+//                    .navigationTitle(day.day)
                 }
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)

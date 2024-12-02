@@ -3,17 +3,21 @@ import Foundation
 struct Challenge01: Challenge, Identifiable {
     var id = UUID()
     var day: String { "01" }
+    var description: String { """
+        Part 1: Calculate the distance between two points. \n
+        Part 2: Calculate how many times the first number occures in the 2nd list then multiplied by that number.
+        """ }
+    var input: String
+
+    init() {
+        input = (try? readTextFile(file: "01")) ?? ""
+    }
     
     private func parseInput() throws -> ([Int], [Int]) {
-        guard let fileURL = Bundle.main.url(forResource: "input", withExtension: "txt") else {
-            throw NSError(domain: "File not found", code: 404, userInfo: nil)
-        }
-
-        let contents = try String(contentsOf: fileURL, encoding: .utf8)
         var first: [Int] = []
         var second: [Int] = []
 
-        let lines = contents.components(separatedBy: CharacterSet.newlines)
+        let lines = input.components(separatedBy: CharacterSet.newlines)
         for line in lines {
             if line.isEmpty {
                 continue
@@ -26,7 +30,7 @@ struct Challenge01: Challenge, Identifiable {
         return (first, second)
     }
 
-    func run1() async throws -> String {
+    func part1() async throws -> String {
         var (first, second) = try parseInput()
         first.sort()
         second.sort()
@@ -38,7 +42,8 @@ struct Challenge01: Challenge, Identifiable {
         
         return String(result)
     }
-    func run2() async throws -> String {
+
+    func part2() async throws -> String {
         let (first, second) = try parseInput()
 
         var counts = [Int:Int]()
