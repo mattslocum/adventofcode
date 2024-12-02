@@ -12,5 +12,5 @@ func readTextFile(file: String) throws -> String {
         throw NSError(domain: "File not found", code: 404, userInfo: nil)
     }
 
-    return try String(contentsOf: fileURL, encoding: .utf8)
+    return try String(contentsOf: fileURL, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
 }

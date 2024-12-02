@@ -14,7 +14,8 @@ struct ChallengeDetailView: View {
             Text(challenge.description)
                 .font(.system(size: 14))
                 .padding()
-            
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+
             HStack {
                 Button("Run Part 1") {
                     Task {
@@ -79,6 +80,7 @@ struct ChallengeDetailView: View {
                 .font(.system(size: 12))
                 .frame(maxWidth: .infinity, alignment: .topLeading)
         }
+        .textSelection(.enabled)
         .onChange(of: challenge.id) { /* newChallenge in */
             // Reset the private variable when the challenge changes
             result.self = ""
