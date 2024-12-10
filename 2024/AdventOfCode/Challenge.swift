@@ -19,6 +19,7 @@ class ChallengeLoader {
             Challenge04(),
             Challenge05(),
             Challenge06(),
+            Challenge07(),
             // Add more challenges here
         ]
     }
