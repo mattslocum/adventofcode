@@ -20,6 +20,12 @@ class ChallengeLoader {
             Challenge05(),
             Challenge06(),
             Challenge07(),
+            Challenge08(),
+            Challenge09(),
+            Challenge10(),
+            Challenge11(),
+            Challenge12(),
+            Challenge13(),
             // Add more challenges here
         ]
     }

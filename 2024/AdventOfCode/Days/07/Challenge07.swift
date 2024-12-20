@@ -24,9 +24,6 @@ struct Challenge07: Challenge, Identifiable {
         
         let lines = input.components(separatedBy: CharacterSet.newlines)
         for line in lines {
-            if line == "" {
-                continue
-            }
             let parts = line.components(separatedBy: ":")
             let answer = Int(parts[0])!
             let params = parts[1].trimmingCharacters(in: .whitespaces).components(separatedBy: " ").map({ Int($0)! })
