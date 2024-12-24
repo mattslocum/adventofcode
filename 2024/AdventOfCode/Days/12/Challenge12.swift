@@ -101,8 +101,104 @@ struct Challenge12: Challenge, Identifiable {
     }
 
     func part2() async throws -> String {
+        let map = try parseInput()
+        var checkedYX: [[Int]] = []
+        var total = 0
         
-        return "part 2"
+        for y in 0..<map.count {
+            for x in 0..<map[0].count {
+                if !checkedYX.contains([y, x]) {
+                    let (cells, edges) = findCellsAndEdges(map: map, startYX: [y, x])
+                    print(map[y][x], edges, cells.count * edges)
+                    checkedYX += cells
+                    total += cells.count * edges
+                }
+            }
+        }
+
+        return String(total)
+    }
+    
+    // Note: edges are the same as corners
+    func findCellsAndEdges(map: [[String]], startYX: [Int]) -> ([[Int]], Int) {
+        var list = [startYX]
+        var corner = 0
+        let findStr = map[startYX[0]][startYX[1]]
+        
+        var foundYX = [startYX]
+        // start tree walking. Depth first search
+        while foundYX.count > 0 {
+            let curYX = foundYX.removeFirst()
+            var hasUp = false;
+            var hasDown = false;
+            var hasRight = false;
+            var hasLeft = false;
+            // check neighbors
+            // up
+            if curYX[0] > 0 && map[curYX[0]-1][curYX[1]] == findStr {
+                let YX = [curYX[0]-1, curYX[1]]
+                if !list.contains(YX) {
+                    foundYX.append(YX)
+                    list.append(YX)
+                }
+                hasUp = true
+            }
+            // down
+            if curYX[0] + 1 < map.count && map[curYX[0]+1][curYX[1]] == findStr {
+                let YX = [curYX[0]+1, curYX[1]]
+                if !list.contains(YX) {
+                    foundYX.append(YX)
+                    list.append(YX)
+                }
+                hasDown = true
+            }
+            // left
+            if curYX[1] > 0 && map[curYX[0]][curYX[1]-1] == findStr {
+                let YX = [curYX[0], curYX[1]-1]
+                if !list.contains(YX) {
+                    foundYX.append(YX)
+                    list.append(YX)
+                }
+                hasLeft = true
+            }
+            // right
+            if curYX[1] + 1 < map[0].count && map[curYX[0]][curYX[1]+1] == findStr {
+                let YX = [curYX[0], curYX[1]+1]
+                if !list.contains(YX) {
+                    foundYX.append(YX)
+                    list.append(YX)
+                }
+                hasRight = true
+            }
+            // check for outer corners
+            if !hasUp && !hasRight {
+                corner += 1
+            }
+            if !hasUp && !hasLeft {
+                corner += 1
+            }
+            if !hasDown && !hasRight {
+                corner += 1
+            }
+            if !hasDown && !hasLeft {
+                corner += 1
+            }
+            // check for inner corners
+            if hasUp && hasRight && map[curYX[0]-1][curYX[1]+1] != findStr {
+                corner += 1
+            }
+            if hasUp && hasLeft && map[curYX[0]-1][curYX[1]-1] != findStr {
+                corner += 1
+            }
+            if hasDown && hasRight && map[curYX[0]+1][curYX[1]+1] != findStr {
+                corner += 1
+            }
+            if hasDown && hasLeft && map[curYX[0]+1][curYX[1]-1] != findStr {
+                corner += 1
+            }
+        }
+
+        return (list, corner)
     }
 }
 

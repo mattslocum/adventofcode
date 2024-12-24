@@ -37,15 +37,17 @@ struct Challenge10: Challenge, Identifiable {
         let (map, zeros) = try parseInput()
         var result = 0
         for start in zeros {
-            result += findEnds(map: map, startYX: start)
+            let (val, _) = findEnds(map: map, startYX: start)
+            result += val
         }
 
         return String(result)
     }
     
-    func findEnds(map: [[Int]], startYX: [Int]) -> Int {
+    func findEnds(map: [[Int]], startYX: [Int]) -> (Int, Int) {
         var finishes: [[Int]] = []
         var pathsYX = [startYX]
+        var totalTrails = 1
         // start tree walking. Depth first search
         while pathsYX.count > 0 {
             let curYX = pathsYX.removeFirst()
@@ -57,6 +59,7 @@ struct Challenge10: Challenge, Identifiable {
                 }
                 continue
             }
+            var origPaths = pathsYX
             // check neighbors
             // up
             if curYX[0] > 0 && map[curYX[0]-1][curYX[1]] == nextVal {
@@ -74,15 +77,22 @@ struct Challenge10: Challenge, Identifiable {
             if curYX[1] + 1 < map[0].count && map[curYX[0]][curYX[1]+1] == nextVal {
                 pathsYX.append([curYX[0], curYX[1]+1])
             }
+            totalTrails += pathsYX.count - origPaths.count - 1
         }
         print(startYX, "|", finishes)
         
-        return finishes.count
+        return (finishes.count, totalTrails)
     }
 
     func part2() async throws -> String {
-        
-        return "part 2"
+        let (map, zeros) = try parseInput()
+        var result = 0
+        for start in zeros {
+            let (_, paths) = findEnds(map: map, startYX: start)
+            result += paths
+        }
+
+        return String(result)
     }
 }
 
