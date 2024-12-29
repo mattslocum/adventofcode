@@ -10,8 +10,8 @@ struct Challenge07: Challenge, Identifiable {
     var id = UUID()
     var day: String { "07" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Found how many numbers can be calculated (left to right) by either using a + or *.\n
+        Part 2: Same as above but also allows for concatenation.
         """ }
     var input: String
     

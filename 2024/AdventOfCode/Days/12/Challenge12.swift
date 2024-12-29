@@ -5,8 +5,8 @@ struct Challenge12: Challenge, Identifiable {
     var id = UUID()
     var day: String { "12" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Calculate the area and parimeter of adjacent letters.\n
+        Part 2: Same as 1, but identify unique sides instead of parimeter. Hint: corners are the same as edges.
         """ }
     var input: String
     

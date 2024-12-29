@@ -6,8 +6,8 @@ struct Challenge05: Challenge, Identifiable {
     var id = UUID()
     var day: String { "05" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: count the center number of sets that don't violate the order defined by pairs.\n
+        Part 2: same as above, but allow for one swap to fix the order.
         """ }
     var input: String
 

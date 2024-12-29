@@ -5,8 +5,8 @@ struct Challenge08: Challenge, Identifiable {
     var id = UUID()
     var day: String { "08" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Letters reflect in opposite directions of sets. Count the number of reflections.\n
+        Part 2: Same as above, but the reflections keep repeating until the edge of the grid.
         """ }
     var input: String
     

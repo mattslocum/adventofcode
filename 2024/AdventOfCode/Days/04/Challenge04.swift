@@ -6,8 +6,8 @@ struct Challenge04: Challenge, Identifiable {
     var id = UUID()
     var day: String { "04" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Count the number of XMAS in any direction.\n
+        Part 2: Count the number of MAS in an X pattern.
         """ }
     var input: String
     var xmas = Array("XMAS").map({ String($0) })

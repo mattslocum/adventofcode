@@ -5,8 +5,8 @@ struct Challenge10: Challenge, Identifiable {
     var id = UUID()
     var day: String { "10" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Count the number of 9s that can be reached from starting at 0 and counting up.\n
+        Part 2: Count the number of unique paths from 0 to 9.
         """ }
     var input: String
     

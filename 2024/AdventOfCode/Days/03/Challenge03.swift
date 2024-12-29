@@ -30,8 +30,8 @@ struct Challenge03: Challenge, Identifiable {
     var id = UUID()
     var day: String { "03" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: find all mul(a,b) and add all outcomes.\n
+        Part 2: same as 1, but do() and don't() can be used to disable/enabled mul().
         """ }
     var input: String
 

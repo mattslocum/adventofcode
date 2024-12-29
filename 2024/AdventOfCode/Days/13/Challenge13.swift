@@ -12,8 +12,8 @@ struct Challenge13: Challenge, Identifiable {
     var id = UUID()
     var day: String { "13" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Find the least number of times A and B should be pressed to move to the Prise destination. Note: A is 3x more expensive than B. \n
+        Part 2: Same as 1, but the Prise is 10^10 farther distance.
         """ }
     var input: String
     

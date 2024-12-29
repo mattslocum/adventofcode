@@ -11,8 +11,8 @@ struct Challenge06: Challenge, Identifiable {
     var id = UUID()
     var day: String { "06" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: The cursor moves until it hits an obsticle and then turns right until is leaves the grid. Count the number of visited squares.\n
+        Part 2: Find how many loops can be made by adding a single blocker.
         """ }
     var input: String
     

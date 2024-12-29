@@ -29,8 +29,8 @@ struct Challenge11: Challenge, Identifiable {
     var id = UUID()
     var day: String { "11" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Tansform a set of numbers into other numbers based on a formula. Run that formula 25 times to get the count of the result.\n
+        Part 2: Run the formula 75 times.
         """ }
     var input: String
     

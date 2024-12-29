@@ -5,8 +5,8 @@ struct Challenge09: Challenge, Identifiable {
     var id = UUID()
     var day: String { "09" }
     var description: String { """
-        Part 1: \n
-        Part 2: 
+        Part 1: Defragment empty spaces by moving letters from the right side into the block on the left side.\n
+        Part 2: Defragment empty spaces by moving whole letter sets instead.
         """ }
     var input: String
     
