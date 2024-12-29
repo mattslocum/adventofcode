@@ -80,7 +80,7 @@ struct Challenge09: Challenge, Identifiable {
         var (values, gaps) = try parseInput()
         let first = values.removeFirst()
         var defrag: [Int] = Array(repeating: 0, count: first)
-        var valsUsed: [Int] = []
+        var valsUsed: [Int:Bool] = [:]
         // 00...111...2...333.44.5555.6666.777.888899
         // 00992111777.44.333....5555.6666.....8888..
         // 130313103
@@ -90,11 +90,11 @@ struct Challenge09: Challenge, Identifiable {
         for var (i, gap) in gaps.enumerated() {
             // 1. find last values that can fill the gap
             for valIdx in (i..<values.count).reversed() {
-                if valsUsed.contains(valIdx) { continue }
+                if valsUsed[valIdx, default: false] { continue }
                 let val = values[valIdx]
                 if val <= gap {
                     defrag += Array(repeating: valIdx+1, count: val)
-                    valsUsed.append(valIdx)
+                    valsUsed[valIdx] = true
                     gap -= val
                 }
                 if gap == 0 {
@@ -107,7 +107,7 @@ struct Challenge09: Challenge, Identifiable {
             }
             // 3. add the next value
             if values.count > i {
-                if !valsUsed.contains(i) {
+                if !valsUsed[i, default: false] {
                     // +1 because we already removed the first value before starting
                     defrag += Array(repeating: i+1, count: values[i])
                 } else {
