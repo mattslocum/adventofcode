@@ -88,6 +88,7 @@ struct Challenge11: Challenge, Identifiable {
         for n in nums {
             found += recurse(num: n, depth: 75)
         }
+        print(cache11.count)
 
         return String(found)
     }
